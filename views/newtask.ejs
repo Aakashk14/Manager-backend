@@ -1,0 +1,151 @@
+<html>
+    <head>
+        <link href="/sidebar.css" rel="stylesheet">
+
+        <Style>
+            body{
+                margin: 0;
+                overflow: hidden;
+            }
+            .container{
+                width: 610px;
+                position: absolute;
+                left:20%;
+                height: 600px;
+                top:100px;
+            }
+            .header{
+                position: sticky;
+                height: 50px;
+                background-color: rgb(233, 233, 233);
+            }
+            .header #static{
+                display: inline-block;
+                position: relative;
+                margin: 10px;
+                bottom:4px;
+                border: 2px solid;
+                border-radius: 4px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                background-color: rgb(197, 211, 211);
+            }
+            .sidebar{
+                bottom:16px;
+            }
+            /* .sidebar{
+                background-color: rgb(154, 168, 193);
+                width: 200px;
+                height: 735px;
+                position: relative;
+                bottom:16px;
+                margin:0;
+            }
+        
+            .sidebar p{
+                display: block;
+                background-color: rgb(217, 220, 207);
+                padding: 10px;
+                position: relative;
+                top:200px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+            } 
+            .sidebar p[active=true]{
+                background-color: rgb(9, 64, 214);
+            }   */
+
+            .form{
+                margin: 10px;
+                background-color: rgb(154, 168, 193);
+                position:absolute;
+                top:2px;
+                box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+
+               
+            }
+            .form input[type=text],textarea{
+                
+                display: inline-block;
+                margin: 10px;
+                resize: none;
+                outline: none;
+                border-radius: 4px;
+            }
+            .form input[type=text],select,input[type=file]{
+                width: 600px;
+                height: 40px;
+                position: relative;
+                left:1px;
+                border-radius: 4px;
+            }
+            .form input[type=file],select,input[type=submit]{
+                position: relative;
+                left:10px;
+                outline: none;
+                margin: 4px;
+                border-radius: 4px;
+
+            }
+            input[type=submit]{
+                width: 200px;
+                height: 50px;
+                position: relative;
+                left:30%;
+                margin: 20px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+            }
+            .header #static,#list{
+                display: inline-block;
+                position: relative;
+                margin: 10px;
+                bottom:4px;
+                border: 2px solid;
+                border-radius: 4px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                background-color: rgb(197, 211, 211);
+            }
+
+        </Style>
+    </head>
+    <body>
+        <div class="header">
+            <p id="static" onclick="location.href='/home'">Home</p>
+
+            <p id="static" onclick="location.href='/my/profile'">My Profile</p>
+            <p id="static" onclick="location.href='/logout'">Logout</p>
+            <p id="list" onclick="location.href='/chat/'">Chat</p>
+
+            <% if(level==1) {%>
+                <p id="static" onclick="location.href='/settings'">Settings</p>
+            <%}%>
+           
+
+        </div>
+        <div class="sidebar">
+            <p active="true">Tasks</p>
+            <p>Events</p>
+        
+        </div>
+        <div class="container">
+            <div class="form">
+              <form method="post" action="/task/create" enctype="multipart/form-data">
+            <input type="text" name="name" placeholder="Title">
+            <textarea cols="79" rows="20" name="details"></textarea>
+            <input type="file" name="file" value="Attachment">
+            <input type="hidden" name="token" value="<%=token %>">
+
+            <select name="agent">
+                <% if(data!=0) {%>
+                <% for(let i=0;i<data.length;i++) { %>
+                    <option value="<%=data[i].userid %>"><%=data[i].email %></option>
+                <%} %>
+               <% }else{ %>
+                <option value="me">me</option>
+               <%}%>
+            </select>
+            <input type="submit" value="Create task">
+            </form>
+
+        </div>
+        </div>
+    </body>
+</html>

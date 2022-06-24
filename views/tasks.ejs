@@ -1,0 +1,291 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+        <link href="/sidebar.css" rel="stylesheet">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    </head>
+
+        <Style>
+            .loading{
+                background-color: red;
+                width: 800px;
+                position: absolute;
+                top:70px;
+                opacity: 0.6;
+                left:20px;
+                
+            }
+            .loading img{
+                position: relative;
+                left:100px;
+            }
+               body{
+                margin: 0;
+            }
+            
+            .header{
+                position: sticky;
+                height: 50px;
+                background-color: rgb(233, 233, 233);
+            }
+            .header p{
+                cursor: pointer;
+            }
+            .header #static,#list{
+                display: inline-block;
+                position: relative;
+                margin: 10px;
+                bottom:4px;
+                border: 2px solid;
+                border-radius: 4px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                background-color: rgb(197, 211, 211);
+            }
+            /* .sidebar{
+                background-color: rgb(7, 7, 19);
+                width: 200px;
+                height: 735px;
+                position: relative;
+                margin:0;
+                
+            }
+            .sidebar p{
+                display: block;
+                background-color: rgb(217, 220, 207);
+                padding: 10px;
+                position: relative;
+                top:200px;
+                cursor: pointer;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+            } 
+            .sidebar p[active=true]{
+                background-color: rgb(9, 64, 214);
+            }   */
+         
+          
+          
+   
+            .details p{
+                padding: 10px;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            }
+            .funcs{
+                position: relative;
+                width: 200px;
+                left:85%;
+                bottom:95%;
+            }
+            .funcs input[type=button]{
+                background-color: white;
+                height: 40px;
+                width: 140px;
+
+            }
+            .main {
+                width: 760px;
+                position: relative;
+                bottom:700px;
+                right:140px;
+                height: auto;
+            }
+
+            .main div{
+              display: block;
+              border: 1px solid;
+              height: 30px;
+              width: 760px;
+              position: relative;
+              right:12px;
+              cursor: pointer;
+            }
+            .main p:hover{
+                background-color: blue;
+                color:white;
+            }
+            .main p{
+                display: inline-block;
+                padding-left: 4px;
+            }
+            #id{
+                background-color: rgb(173, 192, 173);
+                width: 60px;
+                height: 29px;
+                font-weight: bold;
+                text-decoration: underline;
+                color: white;
+                
+            }
+            
+            .txt{
+                padding: 6px;
+            }
+            .row{
+                cursor: pointer;
+            }
+            #date{
+                position: absolute;
+                right:0px;
+                padding: 4px;
+                border-left: 1px solid;
+            }
+            .loading{
+                bottom:700px;
+                z-index: 2;
+                left:100px;
+            }
+            .row:hover{
+               background-color: #37474F;
+               color: white;
+            }
+            .txt{
+                overflow: auto;
+            }
+            .dropdown{
+                position: absolute;
+                left:30%;
+                top:10%;
+            }
+            .functions{
+                position: absolute;
+                top:70px;
+                left:240px;
+            }
+           #name{
+               width: 680px;
+           }
+           input[type="checkbox"]{
+               margin-right:2px;
+               margin-left: 0px;
+           }
+
+           .functions button{
+               margin-left: 100px;
+           }
+        </Style>
+    </head>
+    <script>
+        $(()=>{
+            $("#filter").on('change',function(){
+                $(".loading").show()
+
+                $.get(`/tasks?status=${$(this).val()}&api=1`,function(response){
+                   if(response=="empty"){
+                       $(".main").empty()
+                       $(".loading").hide()
+                       return
+                   }
+                     for(let i=0;i<response.length;i++){
+let el = document.createElement("div");
+el.className="task";
+let url=`'/task/${response[i].taskId}'`
+
+el.setAttribute("onclick","location.href="+url)
+let pl=document.createElement("p")
+let pl1=document.createElement("p")
+pl.id="id";
+pl1.id="name";
+pl.innerText=response[i].taskId;
+pl1.innerText=response[i].Name
+el.append(pl,pl1);
+$(".main").empty()
+$(".main").append(el)
+
+                     }
+                     $(".loading").hide()
+                    })
+                })
+
+$(".functions #del").on('click',function(){
+    var result=[];
+    var i=0;
+$(".main input:checkbox:checked").each(function(){
+    result[i]=$(this).attr('id');
+    i++
+
+    
+})
+if(result.length==0){
+    alert("Select Something")
+    return;
+}
+$(".loading").show()
+$.ajax({
+           url:"/tasks/delete",
+           method:"POST",
+           data:{tasks:result},
+           success:function(response){
+               if(response=="done"){
+                   location.reload()
+
+               }else{
+                   alert("error permission")
+               }
+           }
+
+
+       })
+
+})
+            })
+    </script>
+    <body>
+        <div class="header">
+            <p id="static" onclick="location.href='/home'">Home</p>
+
+            <p id="static" onclick="location.href='/my/profile'">My Profile</p>
+            <p id="static" onclick="location.href='/logout'">Logout</p>
+            <p id="list" onclick="location.href='/chat/'">Chat</p>
+
+            <% if(level==1) {%>
+                <p id="static" onclick="location.href='/settings'">Settings</p>
+            <%}%>
+           
+
+        </div>
+        <div class="sidebar">
+            <p active="true" onclick="location.href='/tasks'">Tasks</p>
+            <p onclick="location.href='/events'">Events</p>
+        
+        </div>
+        <% if(level==1){ %>
+        <div class="funcs">
+            <input type="button" onclick="location.href='/tasks/new'" value="Add Task">
+        </div>
+    <%} %>
+        <% if(data!=0) {%>
+            <div class="functions">
+                <select id="filter">
+                    <option value="Open">Open</option>
+
+                    <option value="Completed">Completed</option>
+                </select>
+                <button type="button"  id="del" class="btn btn-sm btn-danger">Delete Selected</button>
+            </div>
+            <div class="loading" style="display: none;">
+                <img src="/spinner.gif">
+            </div>
+       <div class="main container border">
+          
+        <% for(let i=0;i<data.length;i++){ %>
+
+         <div class="task"">
+             <p id="id"><input type="checkbox" id="<%=data[i].taskId %>"><%= data[i].taskId %></p>
+
+           <p id="name" onclick="location=href='/task/<%=data[i].taskId %>'"><%= data[i].Name %></p>
+           <p id="date"><%= data[i].Date %></p>
+
+
+         </div>
+        <%}%>
+           <%}%>
+        
+
+          
+                
+          
+           
+        </div>
+    </body>
+</html>

@@ -1,0 +1,285 @@
+<html>
+    <head>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+
+        <style>
+            body{
+                margin:0;
+                background-color: rgb(175, 200, 200);
+            }
+             .header{
+                position: sticky;
+                height: 40px;
+                background-color: rgb(233, 233, 233);
+            }
+            .header #static,.container #static{
+                display: inline-block;
+                position: relative;
+                margin: 10px;
+                bottom:4px;
+                border: 2px solid;
+                border-radius: 4px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                background-color: rgb(197, 211, 211);
+                cursor: pointer;
+            }
+            .container{
+                position: relative;
+                top:10%;
+                right:20%;
+                width: 660px;
+            }
+            .container #static{
+                padding: 10px;
+                background-color: white;
+                border-radius: 4px;
+               width: auto;
+               cursor: pointer;
+                
+            }
+            .users{
+                background-color: rgb(255, 255, 255);
+                width: 700px;
+                float: right;
+                height: 600px;
+                margin: 10px;
+                position: relative;
+
+                box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+
+            }
+           
+            .list{
+                position: relative;
+                left:20px;
+            }
+            .list p{
+                display: inline-block;
+                width: 240px;
+                padding: 5px;
+                border-right: 2px solid;
+               
+            }
+             .list div{
+                position: relative;
+                border: 2px solid;
+                top:20px;
+                width: 600px;
+            
+            }
+            .list{
+                position: absolute;
+                top:100px;
+            }
+           
+            .users .action{
+                position: absolute;
+                left:300px;
+                
+                
+            }
+            .action input{
+                width: 120px;
+                height: 40px;
+               margin-top:10px;
+               background-color: rgb(6, 51, 129);
+               color: white;
+              
+            }
+            .dialog input{
+                display: block;
+                position: relative;
+                margin: 10px;
+                top:100px;
+                left:240px;
+                width: 240px;
+                height: 40px;
+            }
+          
+            #otp{
+                width: 100px;
+
+            }
+            #active{
+                width: 60px;
+            }
+      .del{
+          position: relative;
+          left:100px;
+      }
+      #close{
+          position: absolute;
+          right:10px;
+          top:88px;
+
+      }
+            
+          
+         
+                   
+        </style>
+    </head>
+    <script>
+        $(()=>{
+            $(".dialog").hide()
+
+            $("p #danger").on("click",()=>{
+                Swal.fire({
+  title: 'This will delete all data with your account',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, delete it!'
+}).then((result) => {
+  if (result.isConfirmed) {
+      $.post("/settings/delete/account",{
+          data:{id:id,csrf:csrf}
+      })
+    Swal.fire(
+      'Deleted!',
+      'Your file has been deleted.',
+      'success'
+    )
+  }
+})
+            })
+
+            $("#new").on("click",()=>{
+                
+                if($(".dialog").css("display")=="none"){
+                    $("#new").val("Cancel")
+                    $(".list").hide()
+                    $(".dialog").show()
+                }else{
+                    $("#new").val("Add New")
+
+                    $(".list").show()
+                    $(".dialog").hide()
+                }
+            })
+            $("#user1 button").on('click',function(){
+                agentid=$(this).attr('id')
+                $.ajax({
+                    url:"/agent/delete",
+                    method:"post",
+                    data:{agentId:agentid},
+                    success:function(response){
+                        if(response!="error"){
+                            alert("deleted")
+                        }
+                    }
+                })
+            })
+            $("#btn_submit").on("click",()=>{
+                let el2 = $("#e_email").val()
+               if(el2.length==0){
+                   alert("Empty values not allowed")
+                   return;
+               }
+               let elm= document.createElement("div");
+               elm.id="user1";
+               let pm=document.createElement("p");
+               pm.id="email";
+               pm.innerText=el2;
+               let pm1=document.createElement("p");
+               pm1.id="password";
+
+              
+              
+                $.ajax({
+                    url:"/agent/new",
+                    method:"Post",
+                    data:{email:el2},
+                    success:function(response){
+                        if(response=="error"){
+                            alert("email already exist")
+                        }else{
+
+                        //  <div id="user1">
+                    
+                        pm1.innerText=response;
+                        elm.append(pm,pm1);
+                        $(".list").append(elm)
+                    }
+                }
+                })
+                
+            })
+            $("p[data=users]").on("click",()=>{
+                $(".users").show()
+                $("#close").show()
+            })
+
+            $("#close").on("click",()=>{
+                $(".users").hide()
+                $("#close").hide()
+            })
+           
+        })
+    </script>
+    <body>
+        <div class="header">
+        <p id="static">My Profile</p>
+        <p id="static">Home</p>
+        <p id="static">Settings</p>
+
+        </div>
+
+        <div class="container">
+            <p id="static" data="users">Users</p>
+            <p id="static">Teams</p>
+            <p id="static">Activities</p>
+            <p id="static" id="danger">My Account</p>
+        
+        </div>
+        <button  type="button" style="display: none;" class="btn btn-sm btn-primary" id="close">Close</button>
+
+        <div class="users">
+
+            <div class="action">
+                <input type="button" id="new" value="Add New">
+                </div>
+                <div class="dialog">
+                    <input type="email" id="e_email" placeholder="email" required>
+                    <input type="button" id="btn_submit"  value="submit">
+        
+                    
+                </div>
+                
+                <div class="list">
+                   
+                <% for(let i=0;i<agents.length;i++){ %>
+                    
+                    <div id="user1">
+                        <p id="email"><%=agents[i].email %></p>
+                        <% if(agents[i].firstlogin==1) {%>
+                            <p id="otp">____</p>
+
+                        <p id="active">Active</p>
+                        <%} else{ %>
+                            <p id="otp"><%=agents[i].password %></p>
+
+                            <p id="active">Not Active</p>
+
+                        <% } %>
+                        <button id="<%=agents[i].email %>"type="button" class="del btn btn btn-sm" style="background-color: green; color: white;">Delete</button>
+
+                    </div>
+                <% }%>
+            
+             
+         
+            
+             
+            </div>
+                
+        </div>
+        
+    </body>
+</html>

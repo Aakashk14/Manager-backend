@@ -1,0 +1,311 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<link href="/sidebar.css" rel="stylesheet">
+
+<style>
+   body{
+       overflow: hidden;
+   }
+    .task{
+        position: relative;
+        right:140px;
+        bottom:700px;
+        display: block;
+        width: 700px;
+        height: 300px;
+    }
+    .abc {
+        position: relative;
+        right:140px;
+        margin-top: 20px;
+        height: 228px;
+        width: 700px;
+        bottom:700px;
+    }
+    .new_c{
+        height: 60px;
+    }
+    .header{
+                position: sticky;
+                height: 50px;
+                background-color: rgb(233, 233, 233);
+            }
+            .header p{
+                cursor: pointer;
+            }
+            .header #static,#list{
+                display: inline-block;
+                position: relative;
+                margin: 10px;
+                bottom:4px;
+                border: 2px solid;
+                border-radius: 4px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                background-color: rgb(197, 211, 211);
+            }
+            /* .sidebar{
+                background-color: rgb(7, 7, 19);
+                width: 200px;
+                height: 735px;
+                position: relative;
+                bottom:1px;
+                margin:0;
+            }
+            .sidebar p{
+                display: block;
+                background-color: rgb(217, 220, 207);
+                padding: 10px;
+                position: relative;
+                top:200px;
+                cursor: pointer;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+            } 
+            .sidebar p[active=true]{
+                background-color: rgb(9, 64, 214);
+            }   */
+            textarea{
+                resize: none;
+            }
+            #btn_c{
+                position: relative;
+                left:10px;
+                bottom:30px;
+            }
+           
+           .funs {
+               position: relative;
+               left:30%;
+               bottom:1200px;
+               width: 300px;
+           }
+           .comment{
+               word-wrap: break-word;
+               margin-top: 10px;
+               margin-bottom: 10px;
+           }
+           .abc{
+
+           }
+           .outer{
+               height: 640px;
+           }
+           h6{
+               position: relative;
+               bottom:690px;
+               left:200px;
+           }
+           .cm{
+               margin: 4px;
+               background-color: rgb(95, 103, 156);
+               min-height:50px;
+               
+           }
+           .comments{
+               height: 150px;
+               width: 700px;
+               position: relative;
+               right:12px;
+               bottom:1px;
+               overflow-y: auto;
+               overflow-x: hidden;
+           }
+           .comment p{
+               margin: 0;
+               
+           }
+           .comment_main{
+               border: 1px solid;
+               border-radius: 4px;
+               margin: 2px;
+               width: 697px;
+               position: relative;
+               right:13px;
+           }
+           .comment_main #msg{
+               font-size: 13px;
+           }
+           #author{
+               color: blue;
+               text-decoration: underline;
+           }
+           .new_c{
+               margin: 10px;
+           }
+           .task img{
+               margin-top: 40px;
+           }
+           .files{
+               background-color: rgb(175, 164, 164);
+               position: absolute;
+               bottom:4px;
+               left:1px;
+           }
+       
+          
+          
+           
+</style>
+
+    </head>
+    <script>
+
+  
+    
+    $(()=>{
+        $('.comments')[0].scrollTop = $('.comments')[0].scrollHeight
+
+        $("#btn_c").on("click",()=>{
+            taskid = location.href.split("/")
+            taskid=taskid[taskid.length-1]
+            comment =  $("textarea#msg").val()
+          
+
+            $("textarea#msg").val('')
+        
+            let x = document.cookie.split(";")
+            x=x[x.length-1].split("=")[1]
+
+            $.ajax({
+                url:"/task/comment/add",
+                method:"post",
+                data:{taskid:taskid,comment:comment},
+                success:function(response){
+                    if(response!="error"){
+                        let el = document.createElement("div");
+                        el.className=" comment_main"
+                        let pn = document.createElement("p");
+                        pn.id="author"
+                        let pn1 = document.createElement("p");
+                        pn1.id="msg"
+                        pn.innerText=x
+                        pn1.innerText=comment
+                        el.append(pn,pn1)
+                        document.getElementsByClassName("comments")[0].append(el)
+                        $('.comments')[0].scrollTop = $('.comments')[0].scrollHeight
+
+
+
+                    }
+                }
+            })
+        })
+        $(".funs button").on('click',function(){
+            console.log($(this).attr('id'))
+            $.ajax({
+                url:`/task/completed`,
+                method:"post",
+                data:{task:$(this).attr('id')},
+                success:function(response){
+                   if(response!="error"){
+                    location.reload()
+                   }else{
+                       alert("something went wrong")
+                   }
+                }
+            })
+        })
+
+    })
+    </script>
+
+    <body>
+        <div class="header">
+            <p id="static" onclick="location.href='/home'">Home</p>
+
+            <p id="static" onclick="location.href='/my/profile'">My Profile</p>
+            <p id="static" onclick="location.href='/logout'">Logout</p>
+            <p id="list" onclick="location.href='/chat/'">Chat</p>
+            <% if(level==1) {%>
+                <p id="static" onclick="location.href='/settings'">Settings</p>
+            <%}%>
+           
+
+        </div>
+        <div class="sidebar">
+            <p onclick="location.href='/tasks'">Tasks</p>
+            <p onclick="location.href='/events'">Events</p>
+        
+        </div>
+    <div class="outer container">
+        <div class="task container border">
+          <%= data %>
+         <br>
+         <% if(file!=0) {%>
+        
+          <div class="files"> 
+              
+            <a href="/pvt/files/task/<%=task[0].taskId %>/<%=file %>" target="_blank"><%=file %></a> 
+          </div>
+        <%} %>
+        
+        </div>
+        
+        <h6>Comments</h6>
+        <div class="comment box container">
+        <div class="abc container">
+            <div class="comments container border">
+                
+<% if(comments!=0){ %>
+                  <% for(x of comments.comments) {%>
+                    <div class="comment_main">
+                        <p id="author"><%=x.Name%></p>
+                        <p id="msg"><%=x.msg%></p>
+                    </div>
+                <%}%>
+<%}%>
+                 
+                    <!--   <div class="comment_main">
+   <p id="author">aaakash</p>
+   <p id="msg">ddddddddddddddddddddggggggggggggggggggbddddddddddddddddddddggggggggggggggggggbddddddddddddddddddddggggggggggggggggggbddddddddddddddddddddggggggggggggggggggbddddddddddddddddddddggggggggggggggggggbddddddddddddddddddddggggggggggggggggggbddddddddddddddddddddggggggggggggggggggb</p>
+                      </div>
+                     <div class="comment_main">
+   <p id="author">a</p>
+   <p id="msg">bbb</p>
+                      </div>-->
+                
+                    </div>
+                  
+             <% if(task[0].status!="completed") {%>
+                    <div class="new_c">
+                        <textarea class="border round" rows="3" cols="54" id="msg"></textarea>
+                        <button type="button" id="btn_c" class="btn btn-primary">Comment</button>
+                
+                        </div>
+                    <%} %>
+            </div>
+            
+        
+       
+        
+        
+        
+            </div>
+       
+            
+          <!--  <p class="text-monospace border">Hello</p>
+            <p class="text-monospace border">Hello</p>
+          -->
+
+           
+
+        
+
+        
+      
+    </div>
+        <div class=" funs container">
+            <p><%=task[0].Name %></p>
+            <% if(task[0].status=="completed"){ %>
+            <p style="color: green;">Task Completed</p>
+        <%} else{%>
+            <button type="button" id="<%=task[0].taskId %>" class="btn btn-success">Mark Done</button>
+        <%} %>
+        </div>
+      
+    </body>
+
+    </html> -->

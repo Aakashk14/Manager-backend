@@ -1,0 +1,449 @@
+<html>
+    <head>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<link href="/loading.css" rel="stylesheet">
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+        <style>
+            body{
+                margin:0;
+                background-color: rgb(175, 200, 200);
+            }
+             .header{
+                position: sticky;
+                height: 50px;
+                background-color: rgb(233, 233, 233);
+            }
+            .header #static,.container p{
+                display: inline-block;
+                position: relative;
+                margin: 10px;
+                bottom:4px;
+                border: 2px solid;
+                border-radius: 4px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                background-color: rgb(197, 211, 211);
+                cursor: pointer;
+            }
+            .container{
+                position: relative;
+                top:10%;
+                right:20%;
+                width: 660px;
+            }
+            .container #static,#danger{
+                padding: 10px;
+                background-color: white;
+                border-radius: 4px;
+               width: auto;
+               cursor: pointer;
+                
+            }
+            #new{
+                position: relative;
+                left:40%;
+                top:5px;
+            }
+      
+           
+        
+          
+         .dialog{
+             position: relative;
+             left:200px;
+             top:100px;
+             width: 400px;
+         }
+          
+            .dialog button{
+               width: 100px;
+               display: block;
+               margin-top:10px ;
+               
+            }
+            
+          
+            #otp{
+                width: 100px;
+
+            }
+            #active{
+                width: 60px;
+            }
+      .del{
+          position: relative;
+          left:100px;
+      }
+      #close{
+          position: absolute;
+          right:15px;
+          top:118px;
+
+      }
+      .users_settings{
+          position: relative;
+          left:60%;
+          background-color: red;
+          width: 600px;
+          background-color: white;
+          height: 550px;
+          top:40px;
+      }
+      .list{
+        width: 600px;
+            height: 500px;
+            position: relative;
+            top:20px;
+    
+            background-color: white;
+            position: relative;
+        }
+        .det{
+            word-wrap: break-word;
+        }
+        .head{
+            position: relative;
+            right:0px;
+            margin:0;
+            width: 600px;
+        }
+        
+        .head p,.user p{
+            display: inline-block;
+            width: 100px;
+            margin: 5px;
+
+        }
+        #status{
+            width: 60px;
+        }
+        #email{
+            width: 200px;
+            word-wrap: break-word;
+            margin-right:40px;
+        }
+        .head #email,.user #email{
+            margin-left:15px;
+        }
+    
+       .user p{
+           display: inline-block;
+       }
+       .user button{
+           position: relative;
+           left:20px;
+       }
+       .head{
+           background-color: rgb(173, 164, 164);
+       }
+       #otp{
+           width: 120px;
+           word-wrap: break-word;
+       }
+    #note{
+        position: relative;
+        top:100px;
+        left:300px;
+        font-family: 'Courier New', Courier, monospace;
+        color: red;
+        width: 400px;
+        text-decoration: underline;
+    }
+     
+
+            
+          
+         
+                   
+        </style>
+    </head>
+    <script>
+        $(()=>{
+           
+            $(".dialog").hide()
+
+            
+
+            $("#new").on("click",()=>{
+                
+                if($(".dialog").css("display")=="none"){
+                    $("#new").html("Cancel")
+                    $(".list").hide()
+                    $(".dialog").show()
+                }else{
+                    $("#new").html("Add New")
+
+                    $(".list").show()
+                    $(".dialog").hide()
+                }
+            })
+         
+             
+            $("#btn_submit").on("click",()=>{
+                let el2 = $("#e_email").val()
+               if(el2.length==0){
+                   alert("Empty values not allowed")
+                   return;
+               }
+               let elm= document.createElement("div");
+               elm.id="user1";
+               let pm=document.createElement("p");
+               pm.id="email";
+               pm.innerText=el2;
+               let pm1=document.createElement("p");
+               pm1.id="password";
+
+              
+              
+                $.ajax({
+                    url:"/agent/new",
+                    method:"Post",
+                    data:{email:el2},
+                    success:function(response){
+                        if(response=="error"){
+                            $(".loading").hide()
+                            setTimeout(function(){
+                           alert("Email exist")
+
+                            },100)
+                        }else{
+                            $("#new").html("Add New")
+                            $(".dialog").hide()
+                            $(".list").show()
+
+                            let el = document.createElement("div");
+                            el.className="user border-bottom"
+                        el.id=el2
+
+                            let pl1 = document.createElement("p");
+                            let pl2 = document.createElement("p");
+                            let pl3 = document.createElement("p")
+
+
+                            pl1.id="email"
+                            pl2.id="otp";
+                            pl3.id="active"
+                            pl1.innerText=el2
+                            pl2.innerText=response;
+                            pl3.innerText="InActive"
+                            let btn1 = document.createElement("button")
+
+                            btn1.id=el2;
+                        btn1.type="button"
+
+                        btn1.className="btn btn-sm btn-primary";
+                        btn1.innerHTML="Delete"
+                            el.append(pl1,pl2,pl3,btn1)
+                            $(".users").append(el)
+
+
+
+
+
+                        //  <div id="user1">
+                            $("#note").html(`Agent ${el2} added` )
+                            $("#note").show()
+                            setTimeout(function(){
+                                $("#note").hide()
+                            },500)
+                    
+                    }
+                }
+                })
+                
+            })
+            $("p[data=users]").on("click",()=>{
+                $.get("/settings/fetch/agents",(data)=>{
+                    $(".users").empty()
+
+                    if(data=="empty"){
+                        return
+                    }
+                    for(x of data){
+                        let el = document.createElement("div");
+                        let pl1 = document.createElement("p")
+                        let pl2 = document.createElement("p")
+                        let pl3 = document.createElement("p")
+                        let btn1 = document.createElement("button")
+                        el.className="user border-bottom"
+                        el.id=x.email;
+                        pl1.id="email";
+                        pl1.innerText=x.email
+                        pl2.id="otp";
+                        pl3.id="active";
+                        if(x.firstlogin==0){
+                        pl3.innerText="Active"
+                        pl2.innerText="___"
+
+                        }else{
+                            pl3.innerText="InActive"
+                            pl2.innerText=x.password
+
+                        }
+                        btn1.id=x.email;
+                        btn1.type="button"
+
+                        btn1.className="btn btn-sm btn-primary";
+                        btn1.innerHTML="Delete"
+                        el.append(pl1,pl2,pl3,btn1)
+                        $(".users").append(el)
+
+
+
+                    }
+                })
+                $(".users_settings").show()
+                $("#close").show()
+            })
+
+            $("#close").on("click",()=>{
+                $(".users_settings").hide()
+                $("#close").hide()
+                $("#new").html("Add New")
+
+$(".list").show()
+$(".dialog").hide()
+
+            })
+            $(".users").on("click",".user button",function(){
+                let email = $(this).attr('id')
+
+                $.ajax({
+                    url:"/settings/Agent/delete",
+                    method:"post",
+                    data:{agentId:email},
+                    complete:function(response){
+                       
+                            if(response!="error"){
+                            $(".loading").hide();
+                            $(".users_settings").hide()
+                            $("#note").html(`Agent ${email} deleted`)
+                            $("#note").show()
+                           
+                           
+                            setTimeout(function(){
+
+                            
+                            $("#note").hide()
+                            },1000)
+                        }
+                    }
+                })
+            })
+
+            $("#danger").on('click',function(){
+               
+                Swal.fire({
+  title: 'Are you sure?',
+  text: "All Data including Agents will be deleted",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes , Delete All Data'
+}).then((result) => {
+  if (result.isConfirmed) {
+      $(".loading").show()
+      let token = $("#token").val()
+      $.ajax({
+          url:"/account/delete",
+          method:"post",
+          data:{token:token},
+          success:function(response){
+              if(response!="error"){
+              $(".loading").hide()
+              location.href="/"
+              }
+          }
+
+      })
+
+   
+
+  }
+})
+            })
+           
+        })
+    </script>
+    <body>
+        <div class="header">
+            <p id="static" onclick="location.href='/home'">Home</p>
+
+            <p id="static" onclick="location.href='/my/profile'">My Profile</p>
+            
+            <p id="static" onclick="location.href='/settings'">Settings</p>
+            <p id="static" onclick="location.href='/logout'">Logout</p>
+
+        </div>
+
+        <div class="container">
+            <p id="static" data="users">Users</p>
+            <p id="danger">Delete Account</p>
+            <input type="hidden" id="token" value="<%=token %>">
+        
+        </div>
+        <p id="note" style="display: none;">Agent email Deleted</p>
+        <div class="loading" style="display: none;">
+            <img src="/spinner.gif">
+        </div>
+        <button  type="button" style="display: none;" class="btn btn-sm btn-primary" id="close">Close</button>
+
+        <div class="users_settings" style="display: none;">
+
+            <div class="action">
+                <button type="button" id="new" class="btn btn-sm btn-danger">Add New</button>
+                </div>
+                <div class="dialog">
+                    <input type="email" id="e_email" placeholder="email" required>
+                    <button type="button"  class="btn btn-sm btn-secondary" id="btn_submit">Submit</button>
+        
+                    
+                </div>
+                
+                <div class="list border">
+      
+                    <div class="head border-bottom">
+                        <p id="email">Email</p>
+                        <p id="otp">Otp</p>
+                        <p id="status">Status</p>
+                        <p>Action</p>
+                    </div>
+                    <div class="users">
+                   
+                  <!-- 
+                    <div class="user border-bottom">
+                        <p id="email">aakashddddddddd@gmail.com</p>
+                        <p id="otp">asasas</p>
+                        <p id="status">Active</p>
+                        <button type="button" class="btn btn-sm btn-primary">Delete</button>
+                    </div>
+                    <div class="user border-bottom">
+                        <p id="email">aakashddddddddd@gmail.com</p>
+                        <p id="otp">asasas</p>
+                        <p id="status"s>Active</p>
+                        <button type="button" class="btn btn-sm btn-primary">Delete</button>
+                    </div>
+                  
+                    <div class="user border-bottom">
+                        <p id="email">aakashddddddddd@gmail.com</p>
+                        <p id="otp">asasas</p>
+                        <p id="status"s>Active</p>
+                        <button type="button" class="btn btn-sm btn-primary">Delete</button>
+                    </div> -->
+                  
+                  
+                  
+              
+                  </div>
+                  </div>
+                
+        </div>
+        
+    </body>
+</html>

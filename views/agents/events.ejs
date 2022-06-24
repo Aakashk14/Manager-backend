@@ -1,0 +1,247 @@
+<html>
+    <head>       
+         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <link href='/fullcalendar/main.css' rel='stylesheet' />
+        <script src="/fullcalendar/main.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+
+
+        <Style>
+              body{
+                margin: 0;
+                overflow: hidden;
+            }
+            
+             
+            .header{
+                position: sticky;
+                height: 50px;
+                background-color: rgb(233, 233, 233);
+            }
+            .header p{
+                cursor: pointer;
+            }
+            .header #static,#list{
+                display: inline-block;
+                position: relative;
+                margin: 10px;
+                bottom:4px;
+                border: 2px solid;
+                border-radius: 4px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                background-color: rgb(197, 211, 211);
+            }
+            .sidebar{
+                background-color: rgb(7, 7, 19);
+                width: 200px;
+                height: 715px;
+                position: relative;
+                bottom:1px;
+                margin:0;
+            }
+            .fc-day-today {
+  background-color: inherit !important;
+}
+.fc-event{
+    cursor: pointer;
+}
+            .sidebar p{
+                display: block;
+                cursor: pointer;
+                background-color: rgb(217, 220, 207);
+                padding: 10px;
+                position: relative;
+                top:200px;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+            } 
+            .sidebar p[active=true]{
+                background-color: rgb(9, 64, 214);
+            }  
+            .container{ 
+                position: relative;
+                left:300px;
+                bottom:94%;
+                border-radius: 10px;
+                width: 700px;
+                height: 650px;
+            }
+            .title p{
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+            }
+            .details{
+                height: 300px;
+                width: 400px;
+                border: 1px solid ;
+                
+            }
+            .comments{
+                width: 400px;
+                height: 500px;
+                position: absolute;
+               left:60%;
+               top:15%;
+               border: 10px solid rgb(70, 68, 68);
+            }
+            #top{
+                border-bottom:2px solid;
+                background-color: rgb(110, 107, 107);
+            }
+            .action{
+                position: relative;
+                left:70%;
+                bottom:90%;
+            }
+            .action input[type=button]{
+                width: 100px;
+                height: 40px;
+                background-color: white;
+            }
+         .events{
+             position: relative;
+             left:15%;
+             width: 980px;
+             bottom:703px;
+             height: 690px;
+             overflow: hidden;
+         }
+       
+         .funcs{
+             background-color: red;
+             position: relative;
+             left:84%;
+             bottom:700px;
+             width: 200px;
+         }
+            
+         .view{
+             z-index: 2;
+             background-color: white;
+             position: absolute;
+             left:400px;
+             top:200px;
+             height: 350px;
+             width: 600px;
+             box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+
+             
+         }
+         .view #del_e{
+             position: absolute;
+             bottom:5px;
+         }
+           .view .members{
+               height: 200px;
+               overflow: auto;
+               width: 300px;
+           }
+
+           .close{
+               position: absolute;
+               right:1px;
+               background-color: red;
+               top:1px;
+               
+           }
+        </Style>
+    </head>
+    <script type="text/javascript">
+          document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          eventClick: function(info) {
+$.get(`/events/members?id=${info.event.id}`,function(response){
+   
+    let el = document.createElement("p");
+    el.innerText=info.event.title;
+    $(".event_d").prepend(el);
+    $(".view button").attr('id',info.event.id)
+
+   for(x of response){
+       let el1 = document.createElement("p");
+       el1.innerText=x.email;
+       $(".view .members").append(el1)
+   }
+   $(".view").show()
+
+    // change the border color just for fun
+    info.el.style.borderColor = 'red';
+  })
+}
+        });
+        calendar.render();
+        var x ='<%- JSON.stringify(data) %>'
+        var data = JSON.parse(x)
+        if(data!=0){
+        for(x of data){
+        var date = new Date(x.starting_date)
+
+        calendar.addEvent({
+            title: x.Name,
+              start: date,
+              allDay: true,
+              id:x.eventsId
+            });
+        }
+    }
+        
+      });
+
+$(()=>{
+  
+        
+    $(".close_dialog button").on("click",()=>{
+        $(".view").hide()
+    })
+})
+      </script>
+    <body>
+        <div class="header">
+            <p id="static" onclick="location.href='/home'">Home</p>
+
+            <p id="static" onclick="location.href='/my/profile'">My Profile</p>
+            <p id="static" onclick="location.href='/logout'">Logout</p>
+
+            <% if(level==1) {%>
+                <p id="static" onclick="location.href='/settings'">Settings</p>
+            <p id="list">New</p>
+            <%}%>           
+
+        </div>
+        
+        <div class="sidebar">
+            <p onclick="location.href='/tasks'">Tasks</p>
+            <p active="true" onclick="location.href='/events'">Events</p>
+        
+        </div>
+       
+        <div class="view" style="display: none;">
+            <div class="close_dialog">
+            <button type="button" id="close" type="button" class=" close btn btn-sm btn-danger">Close</button>
+            </div>
+
+            <div class="event_d">
+            
+            <h6>Members</h6>
+            <div class="members border">
+                
+
+            </div>
+            
+            
+            </div>
+        </div>
+       
+       <div class="events">
+        <div id='calendar'></div>
+</div>
+
+            
+
+
+
+        </body>
+        </html>
+     
